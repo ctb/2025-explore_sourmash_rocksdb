@@ -1,0 +1,9 @@
+[package]
+name = "explore_sourmash_rocksdb"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocksdb = "0.22.0"
+sourmash = { git = "https://github.com/sourmash-bio/sourmash.git", branch = "ctb_hacky_rocksdb", features = ["branchwater"] }
+#sourmash = { version="0.18.0", features=["branchwater"] }
