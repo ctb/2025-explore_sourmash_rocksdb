@@ -296,6 +296,7 @@ dependencies = [
 name = "explore_sourmash_rocksdb"
 version = "0.1.0"
 dependencies = [
+ "byteorder",
  "rocksdb",
  "sourmash",
 ]

@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+byteorder = "1.5.0"
 rocksdb = "0.22.0"
 sourmash = { git = "https://github.com/sourmash-bio/sourmash.git", branch = "ctb_hacky_rocksdb", features = ["branchwater"] }
 #sourmash = { version="0.18.0", features=["branchwater"] }

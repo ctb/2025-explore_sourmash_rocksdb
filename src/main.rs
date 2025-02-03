@@ -1,3 +1,6 @@
+use byteorder::ReadBytesExt;
+use byteorder::LittleEndian;
+
 use rocksdb::{ColumnFamilyDescriptor, Options};
 use rocksdb::{DB, Direction, IteratorMode};
 use rocksdb::MergeOperands;
@@ -21,7 +24,9 @@ fn main() {
     let mut iter = db.iterator_cf(&cf_handle, IteratorMode::Start); // Always iterates forward
     for item in iter {
         let (key, value) = item.unwrap();
-        println!("Saw {:?} {:?}", key, value);
+
+        let k = (&key[..]).read_u64::<LittleEndian>().unwrap();
+        //println!("Saw k={:?} k2={:?} v={:?}", key, k, value);
+        println!("{}", k);
     }
-    println!("Hello, world!");
 }
