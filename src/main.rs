@@ -7,7 +7,11 @@ use std::path::PathBuf;
 
 use rocksdb::IteratorMode;
 
-use sourmash::index::revindex::RevIndex;
+use sourmash::index::revindex::{ RevIndex, Datasets };
+use sourmash::sketch::minhash::{
+    max_hash_for_scaled,
+};
+use sourmash::ScaledType;
 // use sourmash::index::revindex::disk_revindex::{ RevIndex };
 
 pub const HASHES: &str = "hashes";
@@ -15,12 +19,13 @@ pub const HASHES: &str = "hashes";
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
 struct Args {
-    /// Name of the person to greet
     dbpath: PathBuf,
 
-    /// Number of times to greet
     #[arg(short, long)]
     outpath: PathBuf,
+
+    #[arg(short, long, default_value_t=1000)]
+    scaled: ScaledType,
 }
 
 fn main() {
@@ -37,13 +42,20 @@ fn main() {
 
     let mut data_file = File::create(cli.outpath).expect("creation failed");
 
+    let max_hash = max_hash_for_scaled(cli.scaled);
+
     let iter = db.iterator_cf(&cf_handle, IteratorMode::Start); // Always iterates forward
     for item in iter {
         let (key, value) = item.unwrap();
 
         let k = (&key[..]).read_u64::<LittleEndian>().unwrap();
+
+        if k > max_hash {
+            continue;
+        }
+
         //println!("Saw k={:?} k2={:?} v={:?}", key, k, value);
-        writeln!(data_file, "{}", k).ok();
-        println!("{:?}", value);
+        let v = Datasets::from_slice(&value).expect("Error with value");
+        writeln!(data_file, "{} {}", k, v.len()).ok();
     }
 }

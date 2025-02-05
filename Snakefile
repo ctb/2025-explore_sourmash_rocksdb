@@ -12,9 +12,11 @@ rule make_manifest_csv:
     shell: "sourmash sig collect -F csv -o {output} {input}"
     
 rule extract_rocksdb:
-    input: "tst.rocksdb"
+    input:
+        db="tst.rocksdb",
+        src="src/main.rs",
     output: "hashes.txt"
-    shell: "cargo run {input} -o {output}"
+    shell: "cargo run {input.db} -o {output} -s 10000"
 
 rule make_sig:
     input: "hashes.txt",

@@ -14,11 +14,12 @@ def main():
     p.add_argument('-s', '--scaled', default=1000, type=int)
     args = p.parse_args()
 
-    mh = sourmash.MinHash(n=0, ksize=args.ksize, scaled=args.scaled)
+    mh = sourmash.MinHash(n=0, ksize=args.ksize, scaled=args.scaled,
+                          track_abundance=True)
 
     for line in open(args.infile):
-        hashval = int(line.strip())
-        mh.add_hash(hashval)
+        hashval, abund = map(int, line.strip().split())
+        mh.add_hash_with_abundance(hashval, abund)
 
     ss = sourmash.SourmashSignature(mh, name=args.set_name)
 
